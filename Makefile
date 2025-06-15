@@ -93,22 +93,22 @@ all: $(BUILD_DIR) $(BUILD_DIR)/$(PROJECT).elf $(BUILD_DIR)/$(PROJECT).hex $(BUIL
 
 # Build the project
 $(BUILD_DIR)/$(PROJECT).elf: $(OBJECTS)
-    $(CC) $(OBJECTS) $(LDFLAGS) -o $@
-    $(SZ) $@
+	$(CC) $(OBJECTS) $(LDFLAGS) -o $@
+	$(SZ) $@
 
 $(BUILD_DIR)/%.hex: $(BUILD_DIR)/%.elf
-    $(HEX) $< $@
+	$(HEX) $< $@
 
 $(BUILD_DIR)/%.lst: $(BUILD_DIR)/%.elf
-    $(TOOLCHAIN_PREFIX)objdump -h -S $< > $@
+	$(TOOLCHAIN_PREFIX)objdump -h -S $< > $@
 
 # Compile C sources
 $(BUILD_DIR)/%.o: %.c Makefile | $(BUILD_DIR)
-    $(CC) -c $(CFLAGS) -Wa,-a,-ad,-alms=$(BUILD_DIR)/$(notdir $(<:.c=.lst)) $< -o $@
+	$(CC) -c $(CFLAGS) -Wa,-a,-ad,-alms=$(BUILD_DIR)/$(notdir $(<:.c=.lst)) $< -o $@
 
 # Assemble ASM sources
 $(BUILD_DIR)/%.o: %.S Makefile | $(BUILD_DIR)
-    $(AS) -c $(AS_FLAGS) $< -o $@
+	$(AS) -c $(AS_FLAGS) $< -o $@
 
 # Create build directory
 $(BUILD_DIR):
@@ -116,7 +116,7 @@ $(BUILD_DIR):
 
 # Clean up
 clean:
-    rm -rf $(BUILD_DIR)
+	rm -rf $(BUILD_DIR)
 
 # Flash the device (add your flashing tool command here)
 flash: all
