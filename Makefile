@@ -105,8 +105,7 @@ $(BUILD_DIR)/%.o: %.c Makefile | $(BUILD_DIR) $(CC) -c $(CFLAGS) -Wa,-a,-ad,-alm
 $(BUILD_DIR)/%.o: %.S Makefile | $(BUILD_DIR) $(AS) -c $(AS_FLAGS) $< -o $@
 
 # Create build directory
-$(BUILD_DIR):
-    mkdir -p $@
+$(BUILD_DIR): mkdir -p $@
 
 # Clean up
 clean:
