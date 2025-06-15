@@ -41,14 +41,19 @@ jobs:
 
     - name: Build the project
       run: |
+        # Make sure to use tabs for indentation in Makefile
+        mkdir -p ${{ env.BUILD_DIR }}
+        
         make \
           CROSS_COMPILE=riscv-none-elf- \
           TOOLCHAIN_PATH=$RISC_COMPILER_PATH \
+          BUILD_DIR=${{ env.BUILD_DIR }} \
           build
-
+          
     - name: Generate Hex File
       run: |
-        riscv-none-elf-objcopy -O ihex ${{ env.BUILD_DIR }}/keymod.elf ${{ env.BUILD_DIR }}/keymod.hex
+        # Use the toolchain directly since path is in PATH
+        riscv-none-elf-objcopy -O ihex ${{ env.BUILD_DIR }}/BLE_USB.elf ${{ env.BUILD_DIR }}/keymod.hex
 
     - name: Save build artifacts
       uses: actions/upload-artifact@v4

@@ -6,8 +6,9 @@ MCU = CH32V208GBU6
 ARCH = rv32imac
 ABI = ilp32
 
-# Toolchain prefix
-TOOLCHAIN_PREFIX = riscv-none-embed-
+# Toolchain prefix (can be overridden from command line)
+CROSS_COMPILE ?= riscv-none-embed-
+TOOLCHAIN_PREFIX = $(CROSS_COMPILE)
 
 # Tools
 CC = $(TOOLCHAIN_PREFIX)gcc
@@ -17,8 +18,8 @@ SZ = $(TOOLCHAIN_PREFIX)size
 AR = $(TOOLCHAIN_PREFIX)ar
 HEX = $(CP) -O ihex
 
-# Build path
-BUILD_DIR = obj
+# Build path (can be overridden from command line)
+BUILD_DIR ?= obj
 
 # Optimization settings
 OPT = -Os
@@ -122,4 +123,7 @@ flash: all
     # Add your flash command - example for OpenOCD
     # openocd -f interface/wch-link.cfg -f target/ch32v20x.cfg -c "program $(BUILD_DIR)/$(PROJECT).elf verify reset exit"
 
-.PHONY: all clean flash
+# Build target (alias for 'all')
+build: all
+
+.PHONY: all clean flash build
