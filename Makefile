@@ -92,23 +92,17 @@ vpath %.S $(sort $(dir $(ASM_SOURCES)))
 all: $(BUILD_DIR) $(BUILD_DIR)/$(PROJECT).elf $(BUILD_DIR)/$(PROJECT).hex $(BUILD_DIR)/$(PROJECT).lst
 
 # Build the project
-$(BUILD_DIR)/$(PROJECT).elf: $(OBJECTS)
-    $(CC) $(OBJECTS) $(LDFLAGS) -o $@
-    $(SZ) $@
+$(BUILD_DIR)/$(PROJECT).elf: $(OBJECTS) $(CC) $(OBJECTS) $(LDFLAGS) -o $@ $(SZ) $@
 
-$(BUILD_DIR)/%.hex: $(BUILD_DIR)/%.elf
-    $(HEX) $< $@
+$(BUILD_DIR)/%.hex: $(BUILD_DIR)/%.elf $(HEX) $< $@
 
-$(BUILD_DIR)/%.lst: $(BUILD_DIR)/%.elf
-    $(TOOLCHAIN_PREFIX)objdump -h -S $< > $@
+$(BUILD_DIR)/%.lst: $(BUILD_DIR)/%.elf $(TOOLCHAIN_PREFIX)objdump -h -S $< > $@
 
 # Compile C sources
-$(BUILD_DIR)/%.o: %.c Makefile | $(BUILD_DIR)
-    $(CC) -c $(CFLAGS) -Wa,-a,-ad,-alms=$(BUILD_DIR)/$(notdir $(<:.c=.lst)) $< -o $@
+$(BUILD_DIR)/%.o: %.c Makefile | $(BUILD_DIR) $(CC) -c $(CFLAGS) -Wa,-a,-ad,-alms=$(BUILD_DIR)/$(notdir $(<:.c=.lst)) $< -o $@
 
 # Assemble ASM sources
-$(BUILD_DIR)/%.o: %.S Makefile | $(BUILD_DIR)
-    $(AS) -c $(AS_FLAGS) $< -o $@
+$(BUILD_DIR)/%.o: %.S Makefile | $(BUILD_DIR) $(AS) -c $(AS_FLAGS) $< -o $@
 
 # Create build directory
 $(BUILD_DIR):
