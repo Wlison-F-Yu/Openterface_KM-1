@@ -17,14 +17,24 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: Install RISC-V Toolchain
+    - name: Install dependencies
       run: |
-        sudo apt-get update
-        sudo apt-get install -y gcc-riscv64-unknown-elf binutils-riscv64-unknown-elf
+        sudo apt update
+        sudo apt install -y gcc make cmake ninja-build libnewlib-dev
 
-    - name: Build Project
+    - name: Install WCH RISC-V Toolchain
       run: |
-        make  # Adjust based on your project's build system
+        wget https://www.wch.cn/downloads/file/294.html -O wch_toolchain.tar.gz || true
+        mkdir -p $HOME/wch-riscv
+        tar -xzvf wch_toolchain.tar.gz -C $HOME/wch-riscv || true
+        echo "$HOME/wch-riscv/riscv-none-embed-gcc/bin" >> $GITHUB_PATH
+
+    - name: Build the project
+      run: |
+        mkdir -p build
+        cd build
+        cmake .. -DCMAKE_TOOLCHAIN_FILE=../cmake/wch_toolchain.cmake
+        make -j$(nproc)
 
     - name: Generate Hex File
       run: |
