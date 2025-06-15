@@ -108,8 +108,7 @@ $(BUILD_DIR)/%.o: %.S Makefile | $(BUILD_DIR) $(AS) -c $(AS_FLAGS) $< -o $@
 $(BUILD_DIR): mkdir -p $@
 
 # Clean up
-clean:
-    rm -rf $(BUILD_DIR)
+clean: rm -rf $(BUILD_DIR)
 
 # Flash the device (add your flashing tool command here)
 flash: all
