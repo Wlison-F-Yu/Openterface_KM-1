@@ -3,7 +3,7 @@ name: Build CH32 Project
 on:
   push:
     branches:
-      - main
+      - dev*
 
 env:
   SOURCE_DIR: ${{ github.workspace }}
