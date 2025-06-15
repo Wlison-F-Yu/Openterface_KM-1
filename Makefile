@@ -112,7 +112,7 @@ $(BUILD_DIR)/%.o: %.S Makefile | $(BUILD_DIR)
 
 # Create build directory
 $(BUILD_DIR):
-    mkdir -p $@
+	mkdir -p $@
 
 # Clean up
 clean:
