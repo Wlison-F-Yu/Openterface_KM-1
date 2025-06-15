@@ -30,9 +30,9 @@ jobs:
 
     - name: Install RISC-V GCC via xpm
       run: |
-        xpm install @xpack-dev-tools/riscv-none-elf-gcc@14.2.0-3.1 --verbose
-        echo "$(xpm which --global --no-update @xpack-dev-tools/riscv-none-embed-gcc)/bin" >> $GITHUB_PATH
-        echo "RISC_COMPILER_PATH=$(xpm which --global --no-update @xpack-dev-tools/riscv-none-embed-gcc)" >> $GITHUB_ENV
+        xpm install --global @xpack-dev-tools/riscv-none-elf-gcc@14.2.0-3.1 --verbose
+        echo "$(xpm which --global --no-update @xpack-dev-tools/riscv-none-elf-gcc)/bin" >> $GITHUB_PATH
+        echo "RISC_COMPILER_PATH=$(xpm which --global --no-update @xpack-dev-tools/riscv-none-elf-gcc)" >> $GITHUB_ENV
 
     - name: Install additional dependencies
       run: |
@@ -42,13 +42,13 @@ jobs:
     - name: Build the project
       run: |
         make \
-          CROSS_COMPILE=riscv-none-embed- \
+          CROSS_COMPILE=riscv-none-elf- \
           TOOLCHAIN_PATH=$RISC_COMPILER_PATH \
           build
 
     - name: Generate Hex File
       run: |
-        riscv-none-embed-objcopy -O ihex ${{ env.BUILD_DIR }}/keymod.elf ${{ env.BUILD_DIR }}/keymod.hex
+        riscv-none-elf-objcopy -O ihex ${{ env.BUILD_DIR }}/keymod.elf ${{ env.BUILD_DIR }}/keymod.hex
 
     - name: Save build artifacts
       uses: actions/upload-artifact@v4
