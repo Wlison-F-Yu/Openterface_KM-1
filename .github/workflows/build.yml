@@ -5,6 +5,10 @@ on:
     branches:
       - main
 
+env:
+  SOURCE_DIR: ${{ github.workspace }}
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -24,10 +28,12 @@ jobs:
 
     - name: Generate Hex File
       run: |
-        riscv64-unknown-elf-objcopy -O ihex your_project.elf your_project.hex
+        riscv64-unknown-elf-objcopy -O ihex your_project.elf keymod.hex
 
-    - name: Upload Hex File as Artifact
-      uses: actions/upload-artifact@v2
+    - name: Save build artifacts
+      uses: actions/upload-artifact@v4
       with:
-        name: your_project.hex
-        path: your_project.hex
+        name: keymod
+        path: |
+          ${{ env.SOURCE_DIR }}\Output\openterfaceQT.windows.amd64.installer.exe
+        if-no-files-found: error
