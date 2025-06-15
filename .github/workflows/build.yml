@@ -9,7 +9,7 @@ env:
   SOURCE_DIR: ${{ github.workspace }}
   BUILD_DIR: ${{ github.workspace }}/build
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  RISC_COMPILER_VERSION: 8.2.0-3.1
+  RISC_COMPILER_VERSION: 8.2.0-3.1.1
 
 jobs:
   build:
@@ -19,15 +19,20 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: Download and setup OpenWCH RISC-V GCC
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '16'
+
+    - name: Install xpm
       run: |
-        wget https://github.com/openwch/risc-none-embed-gcc/releases/download/v${RISC_COMPILER_VERSION}/risc-none-embed-gcc-${RISC_COMPILER_VERSION}-x86_64-linux-ubuntu14.tar.bz2
-        mkdir -p ${{ github.workspace }}/toolchain
-        tar -xjf risc-none-embed-gcc-${RISC_COMPILER_VERSION}-x86_64-linux-ubuntu14.tar.bz2 -C ${{ github.workspace }}/toolchain --strip-components 1
-        echo "RISC_COMPILER_PATH=${{ github.workspace }}/toolchain" >> $GITHUB_ENV
-        echo "RISC_COMPILER_BIN=${{ github.workspace }}/toolchain/bin" >> $GITHUB_ENV
-        echo "${{ github.workspace }}/toolchain/bin" >> $GITHUB_PATH
-        chmod +x ${{ github.workspace }}/toolchain/bin/*
+        npm install --global xpm@latest
+
+    - name: Install RISC-V GCC via xpm
+      run: |
+        xpm install --global @xpack-dev-tools/riscv-none-embed-gcc@8.2.0-3.1.1
+        echo "$(xpm which --global --no-update @xpack-dev-tools/riscv-none-embed-gcc)/bin" >> $GITHUB_PATH
+        echo "RISC_COMPILER_PATH=$(xpm which --global --no-update @xpack-dev-tools/riscv-none-embed-gcc)" >> $GITHUB_ENV
 
     - name: Install additional dependencies
       run: |
@@ -36,15 +41,14 @@ jobs:
 
     - name: Build the project
       run: |
-        export PATH=${{ github.workspace }}/toolchain/bin:$PATH
         make \
           CROSS_COMPILE=riscv-none-embed- \
-          TOOLCHAIN_PATH=${{ github.workspace }}/toolchain \
+          TOOLCHAIN_PATH=$RISC_COMPILER_PATH \
           build
 
     - name: Generate Hex File
       run: |
-        ${{ github.workspace }}/toolchain/bin/riscv-none-embed-objcopy -O ihex ${{ env.BUILD_DIR }}/keymod.elf ${{ env.BUILD_DIR }}/keymod.hex
+        riscv-none-embed-objcopy -O ihex ${{ env.BUILD_DIR }}/keymod.elf ${{ env.BUILD_DIR }}/keymod.hex
 
     - name: Save build artifacts
       uses: actions/upload-artifact@v4
