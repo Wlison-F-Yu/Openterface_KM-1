@@ -7,7 +7,9 @@ on:
 
 env:
   SOURCE_DIR: ${{ github.workspace }}
+  BUILD_DIR: ${{ github.workspace }}/build
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  RISC_COMPILER_VERSION: 8.2.0-3.1
 
 jobs:
   build:
@@ -17,38 +19,38 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: Install dependencies
+    - name: Download and setup OpenWCH RISC-V GCC
+      run: |
+        wget https://github.com/openwch/risc-none-embed-gcc/releases/download/v${RISC_COMPILER_VERSION}/risc-none-embed-gcc-${RISC_COMPILER_VERSION}-x86_64-linux-ubuntu14.tar.bz2
+        mkdir -p ${{ github.workspace }}/toolchain
+        tar -xjf risc-none-embed-gcc-${RISC_COMPILER_VERSION}-x86_64-linux-ubuntu14.tar.bz2 -C ${{ github.workspace }}/toolchain --strip-components 1
+        echo "RISC_COMPILER_PATH=${{ github.workspace }}/toolchain" >> $GITHUB_ENV
+        echo "RISC_COMPILER_BIN=${{ github.workspace }}/toolchain/bin" >> $GITHUB_ENV
+        echo "${{ github.workspace }}/toolchain/bin" >> $GITHUB_PATH
+        chmod +x ${{ github.workspace }}/toolchain/bin/*
+
+    - name: Install additional dependencies
       run: |
         sudo apt update
-        sudo apt-get install build-essential libnewlib-dev gcc-riscv64-unknown-elf libusb-1.0-0-dev libudev-dev gdb-multiarch
-        git clone https://github.com/cnlohr/ch32fun.git
-        # sudo cp ch32fun/minichlink/99-minichlink.rules /etc/udev/rules.d/
-        # sudo udevadm control --reload-rules && sudo udevadm trigger
-        # sudo usermod -a -G plugdev $USER
-        cd ch32fun/examples/blink; make build
-
-    - name: Install xPack RISC-V Toolchain
-      run: |
-        wget https://github.com/xpack-dev-tools/riscv-none-embed-gcc/releases/download/v10.2.0-1.1/xpack-riscv-none-embed-gcc-10.2.0-1.1-linux-x64.tar.gz
-        mkdir -p $HOME/toolchains
-        tar -xzf xpack-riscv-none-embed-gcc-*.tar.gz -C $HOME/toolchains
-        echo "$HOME/toolchains/xpack-riscv-none-embed-gcc-10.2.0-1.1/bin" >> $GITHUB_PATH
+        sudo apt-get install build-essential libusb-1.0-0-dev libudev-dev gdb-multiarch
 
     - name: Build the project
       run: |
-        mkdir -p build
-        cd build
-        cmake .. -DCMAKE_TOOLCHAIN_FILE=../cmake/wch_toolchain.cmake
-        make -j$(nproc)
+        export PATH=${{ github.workspace }}/toolchain/bin:$PATH
+        make \
+          CROSS_COMPILE=riscv-none-embed- \
+          TOOLCHAIN_PATH=${{ github.workspace }}/toolchain \
+          build
 
     - name: Generate Hex File
       run: |
-        riscv64-unknown-elf-objcopy -O ihex your_project.elf keymod.hex
+        ${{ github.workspace }}/toolchain/bin/riscv-none-embed-objcopy -O ihex ${{ env.BUILD_DIR }}/keymod.elf ${{ env.BUILD_DIR }}/keymod.hex
 
     - name: Save build artifacts
       uses: actions/upload-artifact@v4
       with:
         name: keymod
         path: |
-          ${{ env.SOURCE_DIR }}\Output\openterfaceQT.windows.amd64.installer.exe
+          ${{ env.BUILD_DIR }}/keymod.hex
+          ${{ env.BUILD_DIR }}/keymod.elf
         if-no-files-found: error
