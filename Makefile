@@ -51,6 +51,7 @@ CFLAGS += -I./LIB
 CFLAGS += -I./APP/UART
 CFLAGS += -I./APP/USBLIB/CONFIG
 CFLAGS += -I./APP/USBLIB/USB-Driver/inc
+CFLAGS += -I./Profile
 
 # AS compilation flags
 AS_INCLUDES = 
