@@ -39,9 +39,15 @@ jobs:
         sudo apt update
         sudo apt-get install build-essential libusb-1.0-0-dev libudev-dev gdb-multiarch
 
+    - name: Fix Makefile indentation
+      run: |
+        # Convert leading spaces to tabs in Makefile
+        sed -i 's/^    /\t/g' Makefile
+        # Verify the fix was applied
+        grep -n "^\\t" Makefile
+
     - name: Build the project
       run: |
-        # Make sure to use tabs for indentation in Makefile
         mkdir -p ${{ env.BUILD_DIR }}
         
         make \
