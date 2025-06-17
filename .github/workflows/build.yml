@@ -9,7 +9,7 @@ env:
   SOURCE_DIR: ${{ github.workspace }}
   BUILD_DIR: ${{ github.workspace }}\build
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  RISC_COMPILER_VERSION: 14.2.0-3.1
+  RISC_COMPILER_VERSION: 10.2.0-1.2
 
 jobs:
   build:
