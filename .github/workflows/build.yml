@@ -30,9 +30,9 @@ jobs:
 
     - name: Install RISC-V GCC from source
       run: |
-        curl -L -o riscv-none-embed-gcc.zip https://github.com/openwch/risc-none-embed-gcc/releases/download/8.2.0/riscv-none-embed-gcc-8.2.0.zip
+        curl -L -o riscv-none-embed-gcc.zip https://github.com/openwch/risc-none-embed-gcc/archive/refs/tags/8.2.0.zip
         mkdir -p C:\tools\riscv-none-embed-gcc
-        powershell -Command "Expand-Archive -Path riscv-none-embed-gcc.zip -DestinationPath C:\tools\riscv-none-embed-gcc"
+        powershell -Command "Expand-Archive -Path 8.2.0.zip -DestinationPath C:\tools\riscv-none-embed-gcc"
         echo "C:\\tools\\riscv-none-embed-gcc\\riscv-none-embed-gcc-8.2.0\\.content\\bin" >> $GITHUB_PATH
         echo "RISC_COMPILER_PATH=C:\\tools\\riscv-none-embed-gcc\\riscv-none-embed-gcc-8.2.0\\.content" >> $GITHUB_ENV
 
