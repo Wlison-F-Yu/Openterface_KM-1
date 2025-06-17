@@ -7,13 +7,13 @@ on:
 
 env:
   SOURCE_DIR: ${{ github.workspace }}
-  BUILD_DIR: ${{ github.workspace }}/build
+  BUILD_DIR: ${{ github.workspace }}\build
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   RISC_COMPILER_VERSION: 14.2.0-3.1
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
 
     steps:
     - name: Checkout code
@@ -30,36 +30,34 @@ jobs:
 
     - name: Install RISC-V GCC via xpm
       run: |
-        xpm install --global @xpack-dev-tools/riscv-none-elf-gcc@${RISC_COMPILER_VERSION} --verbose
-        echo "/home/runner/.local/xPacks/@xpack-dev-tools/riscv-none-elf-gcc/${RISC_COMPILER_VERSION}/.content/bin" >> $GITHUB_PATH
-        echo "RISC_COMPILER_PATH=/home/runner/.local/xPacks/@xpack-dev-tools/riscv-none-elf-gcc/${RISC_COMPILER_VERSION}/.content" >> $GITHUB_ENV
+        xpm install --global @xpack-dev-tools/riscv-none-elf-gcc@${{ env.RISC_COMPILER_VERSION }} --verbose
+        echo "C:\\Users\\runneradmin\\.xPacks\\@xpack-dev-tools\\riscv-none-elf-gcc\\${{ env.RISC_COMPILER_VERSION }}\\.content\\bin" >> $GITHUB_PATH
+        echo "RISC_COMPILER_PATH=C:\\Users\\runneradmin\\.xPacks\\@xpack-dev-tools\\riscv-none-elf-gcc\\${{ env.RISC_COMPILER_VERSION }}\\.content" >> $GITHUB_ENV
 
     - name: Install additional dependencies
       run: |
-        sudo apt update
-        sudo apt-get install build-essential libusb-1.0-0-dev libudev-dev gdb-multiarch
+        choco install make
+        choco install gdb
 
     - name: Build the project
       run: |
-        # Make sure to use tabs for indentation in Makefile
-        mkdir -p ${{ env.BUILD_DIR }}
+        mkdir ${{ env.BUILD_DIR }}
         
         make \
           CROSS_COMPILE=riscv-none-elf- \
           TOOLCHAIN_PATH=$RISC_COMPILER_PATH \
           BUILD_DIR=${{ env.BUILD_DIR }} \
           build
-          
+
     - name: Generate Hex File
       run: |
-        # Use the toolchain directly since path is in PATH
-        riscv-none-elf-objcopy -O ihex ${{ env.BUILD_DIR }}/BLE_USB.elf ${{ env.BUILD_DIR }}/keymod.hex
+        riscv-none-elf-objcopy -O ihex ${{ env.BUILD_DIR }}\BLE_USB.elf ${{ env.BUILD_DIR }}\keymod.hex
 
     - name: Save build artifacts
       uses: actions/upload-artifact@v4
       with:
         name: keymod
         path: |
-          ${{ env.BUILD_DIR }}/keymod.hex
-          ${{ env.BUILD_DIR }}/keymod.elf
+          ${{ env.BUILD_DIR }}\keymod.hex
+          ${{ env.BUILD_DIR }}\keymod.elf
         if-no-files-found: error
