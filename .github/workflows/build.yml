@@ -30,28 +30,33 @@ jobs:
 
     - name: Install RISC-V GCC via xpm
       run: |
-        xpm install --global @xpack-dev-tools/riscv-none-elf-gcc@${{ env.RISC_COMPILER_VERSION }} --verbose
-        echo "C:\\Users\\runneradmin\\.xPacks\\@xpack-dev-tools\\riscv-none-elf-gcc\\${{ env.RISC_COMPILER_VERSION }}\\.content\\bin" >> $GITHUB_PATH
-        echo "RISC_COMPILER_PATH=C:\\Users\\runneradmin\\.xPacks\\@xpack-dev-tools\\riscv-none-elf-gcc\\${{ env.RISC_COMPILER_VERSION }}\\.content" >> $GITHUB_ENV
+        xpm install --global @xpack-dev-tools/riscv-none-embed-gcc@${{ env.RISC_COMPILER_VERSION }} --verbose
+        echo "C:\\Users\\runneradmin\\.xPacks\\@xpack-dev-tools\\riscv-none-embed-gcc\\${{ env.RISC_COMPILER_VERSION }}\\.content\\bin" >> $GITHUB_PATH
+        echo "RISC_COMPILER_PATH=C:\\Users\\runneradmin\\.xPacks\\@xpack-dev-tools\\riscv-none-embed-gcc\\${{ env.RISC_COMPILER_VERSION }}\\.content" >> $GITHUB_ENV
 
     - name: Install additional dependencies
       run: |
         choco install make
-        choco install gdb
+
+    - name: Install gdb manually
+      run: |
+        curl -L -o gdb.zip https://example.com/path-to-gdb.zip
+        unzip gdb.zip -d C:\tools\gdb
+        echo "C:\tools\gdb\bin" >> $GITHUB_PATH
 
     - name: Build the project
       run: |
         mkdir ${{ env.BUILD_DIR }}
         
         make \
-          CROSS_COMPILE=riscv-none-elf- \
+          CROSS_COMPILE=riscv-none-embed- \
           TOOLCHAIN_PATH=$RISC_COMPILER_PATH \
           BUILD_DIR=${{ env.BUILD_DIR }} \
           build
 
     - name: Generate Hex File
       run: |
-        riscv-none-elf-objcopy -O ihex ${{ env.BUILD_DIR }}\BLE_USB.elf ${{ env.BUILD_DIR }}\keymod.hex
+        riscv-none-embed-objcopy -O ihex ${{ env.BUILD_DIR }}\BLE_USB.elf ${{ env.BUILD_DIR }}\keymod.hex
 
     - name: Save build artifacts
       uses: actions/upload-artifact@v4
