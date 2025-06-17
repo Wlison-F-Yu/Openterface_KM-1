@@ -28,11 +28,13 @@ jobs:
       run: |
         npm install --global xpm@latest
 
-    - name: Install RISC-V GCC via xpm
+    - name: Install RISC-V GCC from source
       run: |
-        xpm install --global @xpack-dev-tools/riscv-none-embed-gcc@${{ env.RISC_COMPILER_VERSION }} --verbose
-        echo "C:\\Users\\runneradmin\\.xPacks\\@xpack-dev-tools\\riscv-none-elf-gcc\\${{ env.RISC_COMPILER_VERSION }}\\.content\\bin" >> $GITHUB_PATH
-        echo "RISC_COMPILER_PATH=C:\\Users\\runneradmin\\.xPacks\\@xpack-dev-tools\\riscv-none-elf-gcc\\${{ env.RISC_COMPILER_VERSION }}\\.content" >> $GITHUB_ENV
+        curl -L -o riscv-none-embed-gcc.zip https://github.com/openwch/risc-none-embed-gcc/releases/download/8.2.0/riscv-none-embed-gcc-8.2.0.zip
+        mkdir -p C:\tools\riscv-none-embed-gcc
+        powershell -Command "Expand-Archive -Path riscv-none-embed-gcc.zip -DestinationPath C:\tools\riscv-none-embed-gcc"
+        echo "C:\\tools\\riscv-none-embed-gcc\\riscv-none-embed-gcc-8.2.0\\.content\\bin" >> $GITHUB_PATH
+        echo "RISC_COMPILER_PATH=C:\\tools\\riscv-none-embed-gcc\\riscv-none-embed-gcc-8.2.0\\.content" >> $GITHUB_ENV
 
     - name: Install additional dependencies
       run: |
