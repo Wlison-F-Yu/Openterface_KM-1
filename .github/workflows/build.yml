@@ -19,22 +19,13 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: Setup Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: '16'
-
-    - name: Install xpm
+    - name: Install RISC-V GCC from MounRiver Studio
       run: |
-        npm install --global xpm@latest
-
-    - name: Install RISC-V GCC from source
-      run: |
-        curl -L -o riscv-none-embed-gcc.zip https://github.com/openwch/risc-none-embed-gcc/archive/refs/tags/8.2.0.zip
-        mkdir -p C:\tools\riscv-none-embed-gcc
-        powershell -Command "Expand-Archive -Path riscv-none-embed-gcc.zip -DestinationPath C:\tools\riscv-none-embed-gcc"
-        echo "C:\\tools\\riscv-none-embed-gcc\\riscv-none-embed-gcc-8.2.0\\.content\\bin" >> $GITHUB_PATH
-        echo "RISC_COMPILER_PATH=C:\\tools\\riscv-none-embed-gcc\\riscv-none-embed-gcc-8.2.0\\.content" >> $GITHUB_ENV
+        curl -L -o MounRiver_Studio_Setup.zip http://file-oss.mounriver.com/upgrade/MounRiver_Studio_Setup_V210.zip
+        mkdir -p C:\tools\MounRiver_Studio
+        powershell -Command "Expand-Archive -Path MounRiver_Studio_Setup.zip -DestinationPath C:\tools\MounRiver_Studio"
+        echo "C:\\tools\\MounRiver_Studio\\resources\\win32\\components\\WCH\\Toolchain\\RISC-V Embedded GCC\\bin" >> $GITHUB_PATH
+        echo "RISC_COMPILER_PATH=C:\\tools\\MounRiver_Studio\\resources\\win32\\components\\WCH\\Toolchain\\RISC-V Embedded GCC" >> $GITHUB_ENV
 
     - name: Install additional dependencies
       run: |
@@ -42,13 +33,7 @@ jobs:
 
     - name: Build the project
       run: |
-        mkdir ${{ env.BUILD_DIR }}
-        
-        make \
-          CROSS_COMPILE=riscv-none-embed- \
-          TOOLCHAIN_PATH=$RISC_COMPILER_PATH \
-          BUILD_DIR=${{ env.BUILD_DIR }} \
-          build
+        make -j4 all
 
     - name: Generate Hex File
       run: |
