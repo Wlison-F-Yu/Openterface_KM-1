@@ -33,6 +33,9 @@ CFLAGS += --specs=nano.specs
 CFLAGS += -std=gnu99
 CFLAGS += -Wall
 
+# # Workaround for missing types in WCH library headers
+# CFLAGS += -include stdint.h -DbStatus_t=uint8_t
+
 # Defined symbols
 CFLAGS += -DBLE_BUFF_MAX_LEN=516
 CFLAGS += -DCH32V20x_D8W
@@ -40,10 +43,6 @@ CFLAGS += -DBLE_MEMHEAP_SIZE=10240
 CFLAGS += -DBLE_TX_NUM_EVENT=5
 
 # Include paths
-CFLAGS += -I./SRC/Core
-CFLAGS += -I./SRC/Startup
-CFLAGS += -I./SRC/Debug
-CFLAGS += -I./SRC/Peripheral/inc
 CFLAGS += -I./LIB
 CFLAGS += -I./APP/include
 CFLAGS += -I./Profile/include
@@ -52,6 +51,10 @@ CFLAGS += -I./APP/UART
 CFLAGS += -I./APP/USBLIB/CONFIG
 CFLAGS += -I./APP/USBLIB/USB-Driver/inc
 CFLAGS += -I./Profile
+CFLAGS += -I./SRC/Core
+CFLAGS += -I./SRC/Startup
+CFLAGS += -I./SRC/Debug
+CFLAGS += -I./SRC/Peripheral/inc
 
 # AS compilation flags
 AS_INCLUDES = 
