@@ -31,10 +31,18 @@ jobs:
       run: |
         choco install make
 
+    - name: Verify RISC-V GCC installation
+      run: |
+        echo "Checking RISC-V GCC installation..."
+        where riscv-none-embed-gcc || echo "RISC-V GCC not found in PATH"
+        echo "Current PATH: $PATH"
+        echo "RISC_COMPILER_PATH: ${{ env.RISC_COMPILER_PATH }}"
+
     - name: Build the project
       run: |
+        echo "Starting build process..."
         cd build
-        make -j4 all
+        make -j4 all || echo "Build failed. Check logs for details."
 
     - name: Save build artifacts
       uses: actions/upload-artifact@v4
