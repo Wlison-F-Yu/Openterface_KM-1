@@ -21,13 +21,18 @@ jobs:
 
     - name: Install build dependencies
       run: |
-        choco install -y git python3 make cmake mingw
+        choco install -y make
 
     - name: Clone risc-none-embed-gcc and configure environment
       run: |
-        git clone --recursive https://github.com/openwch/risc-none-embed-gcc.git C:\tools\risc-none-embed-gcc
+        wget https://github.com/openwch/risc-none-embed-gcc/archive/refs/tags/8.2.0.zip -o risc-none-embed-gcc.zip
+        tar -xf risc-none-embed-gcc.zip
+        mv risc-none-embed-gcc-8.2.0 risc-none-embed-gcc
+        mkdir -p C:\tools\risc-none-embed-gcc
+        cp -r risc-none-embed-gcc/* C:\tools\risc-none-embed-gcc
         echo "C:\\tools\\risc-none-embed-gcc\\bin" >> $GITHUB_PATH
         echo "RISC_COMPILER_PATH=C:\\tools\\risc-none-embed-gcc" >> $GITHUB_ENV
+        dir C:\tools\risc-none-embed-gcc\bin
 
     - name: Build the project
       run: |
