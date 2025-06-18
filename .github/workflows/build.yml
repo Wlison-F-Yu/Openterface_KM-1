@@ -19,13 +19,28 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: Install RISC-V GCC from MounRiver Studio
+    - name: Cache MounRiver Studio
+      uses: actions/cache@v3
+      with:
+        path: C:\tools\MounRiver_Studio
+        key: MounRiver-Studio-${{ runner.os }}-${{ env.RISC_COMPILER_VERSION }}
+        restore-keys: |
+          MounRiver-Studio-${{ runner.os }}
+
+    - name: Install RISC-V GCC from MounRiver Studio (if not cached)
+      if: steps.cache.outputs.cache-hit != 'true'
       run: |
         curl -L -o MounRiver_Studio_Setup.zip http://file-oss.mounriver.com/upgrade/MounRiver_Studio_Setup_V210.zip
-        mkdir -p C:\tools\MounRiver_Studio
+        mkdir -p C:\tools\MounRiver_Studio\\resources\\app\\resources\\win32\\components\\WCH\\Toolchain\\RISC-V Embedded GCC\\bin
         powershell -Command "Expand-Archive -Path MounRiver_Studio_Setup.zip -DestinationPath C:\tools\MounRiver_Studio"
         echo "C:\\tools\\MounRiver_Studio\\resources\\app\\resources\\win32\\components\\WCH\\Toolchain\\RISC-V Embedded GCC\\bin" >> $GITHUB_PATH
         echo "RISC_COMPILER_PATH=C:\\tools\\MounRiver_Studio\\resources\\app\\resources\\win32\\components\\WCH\\Toolchain\\RISC-V Embedded GCC" >> $GITHUB_ENV
+
+    - name: Refresh environment variables
+      run: |
+        echo "Refreshing environment variables..."
+        echo "PATH: $PATH"
+        echo "RISC_COMPILER_PATH: ${{ env.RISC_COMPILER_PATH }}"
 
     - name: Install additional dependencies
       run: |
