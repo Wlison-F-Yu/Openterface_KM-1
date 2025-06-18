@@ -33,11 +33,8 @@ jobs:
 
     - name: Build the project
       run: |
+        cd build
         make -j4 all
-
-    - name: Generate Hex File
-      run: |
-        riscv-none-embed-objcopy -O ihex ${{ env.BUILD_DIR }}\BLE_USB.elf ${{ env.BUILD_DIR }}\keymod.hex
 
     - name: Save build artifacts
       uses: actions/upload-artifact@v4
