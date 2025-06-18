@@ -42,18 +42,8 @@ jobs:
         echo "Refreshing environment variables..."
         echo "PATH: $PATH"
         echo "RISC_COMPILER_PATH: ${{ env.RISC_COMPILER_PATH }}"
-        dir "C:\\tools\\MounRiver_Studio\\resources\\app\\resources\\win32\\components\\WCH\\Toolchain\\RISC-V Embedded GCC\\bin"
-
-    - name: Install additional dependencies
-      run: |
-        choco install make
-
-    - name: Verify RISC-V GCC installation
-      run: |
-        echo "Checking RISC-V GCC installation..."
-        where riscv-none-embed-gcc || echo "RISC-V GCC not found in PATH"
-        echo "Current PATH: $PATH"
-        echo "RISC_COMPILER_PATH: ${{ env.RISC_COMPILER_PATH }}"
+        dir /s make.exe
+        dir /s riscv-none-embed-gcc.exe
 
     - name: Build the project
       run: |
