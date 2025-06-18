@@ -24,8 +24,8 @@ jobs:
         curl -L -o MounRiver_Studio_Setup.zip http://file-oss.mounriver.com/upgrade/MounRiver_Studio_Setup_V210.zip
         mkdir -p C:\tools\MounRiver_Studio
         powershell -Command "Expand-Archive -Path MounRiver_Studio_Setup.zip -DestinationPath C:\tools\MounRiver_Studio"
-        echo "C:\\tools\\MounRiver_Studio\\resources\\win32\\components\\WCH\\Toolchain\\RISC-V Embedded GCC\\bin" >> $GITHUB_PATH
-        echo "RISC_COMPILER_PATH=C:\\tools\\MounRiver_Studio\\resources\\win32\\components\\WCH\\Toolchain\\RISC-V Embedded GCC" >> $GITHUB_ENV
+        echo "C:\\tools\\MounRiver_Studio\\resources\\app\\resources\\win32\\components\\WCH\\Toolchain\\RISC-V Embedded GCC\\bin" >> $GITHUB_PATH
+        echo "RISC_COMPILER_PATH=C:\\tools\\MounRiver_Studio\\resources\\app\\resources\\win32\\components\\WCH\\Toolchain\\RISC-V Embedded GCC" >> $GITHUB_ENV
 
     - name: Install additional dependencies
       run: |
