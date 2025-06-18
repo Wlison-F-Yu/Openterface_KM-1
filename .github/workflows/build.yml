@@ -27,20 +27,13 @@ jobs:
     - name: Clone risc-none-embed-gcc and configure environment
       run: |
         wget https://github.com/openwch/risc-none-embed-gcc/archive/refs/tags/8.2.0.zip -o risc-none-embed-gcc.zip
-        if exist risc-none-embed-gcc.zip (
-          unzip risc-none-embed-gcc.zip -d C:\tools\risc-none-embed-gcc
-        ) else (
-          echo "Error: Failed to download risc-none-embed-gcc.zip"
-          exit 1
-        )
+        unzip risc-none-embed-gcc.zip -d C:\\tools
+        dir c:\\tools
+        echo "RISC_COMPILER_PATH=C:\\tools\\risc-none-embed-gcc\\risc-none-embed-gcc-${{ env.RISC_COMPILER_VERSION }}" >> $GITHUB_ENV
         echo "C:\\tools\\risc-none-embed-gcc\\bin" >> $GITHUB_PATH
         echo "RISC_COMPILER_PATH=C:\\tools\\risc-none-embed-gcc" >> $GITHUB_ENV
-        if exist C:\tools\risc-none-embed-gcc\bin\risc-none-embed-gcc.exe (
-          echo "Compiler setup verified successfully."
-        ) else (
-          echo "Error: Compiler executable not found in the expected directory."
-          exit 1
-        )
+
+
 
     - name: Build the project
       run: |
