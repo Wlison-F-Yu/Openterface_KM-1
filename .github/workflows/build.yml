@@ -21,18 +21,26 @@ jobs:
 
     - name: Install build dependencies
       run: |
-        choco install -y make
+        choco install -y make wget unzip
+        echo "PATH=C:\\ProgramData\\chocolatey\\bin;${{ env.PATH }}" >> $GITHUB_PATH
 
     - name: Clone risc-none-embed-gcc and configure environment
       run: |
         wget https://github.com/openwch/risc-none-embed-gcc/archive/refs/tags/8.2.0.zip -o risc-none-embed-gcc.zip
-        tar -xf risc-none-embed-gcc.zip
-        mv risc-none-embed-gcc-8.2.0 risc-none-embed-gcc
-        mkdir -p C:\tools\risc-none-embed-gcc
-        cp -r risc-none-embed-gcc/* C:\tools\risc-none-embed-gcc
+        if exist risc-none-embed-gcc.zip (
+          unzip risc-none-embed-gcc.zip -d C:\tools\risc-none-embed-gcc
+        ) else (
+          echo "Error: Failed to download risc-none-embed-gcc.zip"
+          exit 1
+        )
         echo "C:\\tools\\risc-none-embed-gcc\\bin" >> $GITHUB_PATH
         echo "RISC_COMPILER_PATH=C:\\tools\\risc-none-embed-gcc" >> $GITHUB_ENV
-        dir C:\tools\risc-none-embed-gcc\bin
+        if exist C:\tools\risc-none-embed-gcc\bin\risc-none-embed-gcc.exe (
+          echo "Compiler setup verified successfully."
+        ) else (
+          echo "Error: Compiler executable not found in the expected directory."
+          exit 1
+        )
 
     - name: Build the project
       run: |
