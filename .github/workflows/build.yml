@@ -39,8 +39,8 @@ jobs:
       run: |
         echo "Starting build process..."
         cd build
-        set PATH=C:\tools\risc-none-embed-gcc\bin;%PATH%
-        set RISC_COMPILER_PATH=C:\tools\risc-none-embed-gcc
+        $env:PATH = "C:\tools\risc-none-embed-gcc\bin;" + $env:PATH
+        $env:RISC_COMPILER_PATH = "C:\tools\risc-none-embed-gcc"
         make -j4 all || echo "Build failed. Check logs for details."
 
     - name: Save build artifacts
