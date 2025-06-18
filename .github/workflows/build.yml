@@ -36,6 +36,7 @@ jobs:
         echo "C:\\tools\\MounRiver_Studio\\resources\\app\\resources\\win32\\components\\WCH\\Toolchain\\RISC-V Embedded GCC\\bin" >> $GITHUB_PATH
         echo "C:\\tools\\MounRiver_Studio\\resources\\app\\resources\\win32\\others\\Build_Tools\\Make\\bin" >> $GITHUB_PATH
         echo "RISC_COMPILER_PATH=C:\\tools\\MounRiver_Studio\\resources\\app\\resources\\win32\\components\\WCH\\Toolchain\\RISC-V Embedded GCC" >> $GITHUB_ENV
+        find C:\\tools\\MounRiver_Studio -name "make.exe"
 
     - name: Refresh environment variables
       run: |
