@@ -19,10 +19,24 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: Install make using Chocolatey
+    - name: Install build dependencies
       run: |
-        choco install make --yes
-        echo "C:\\ProgramData\\chocolatey\\bin" >> $GITHUB_PATH
+        choco install -y git python3 make cmake mingw
+
+    - name: Clone risc-none-embed-gcc
+      run: |
+        git clone --recursive https://github.com/openwch/risc-none-embed-gcc.git C:\tools\risc-none-embed-gcc
+
+    - name: Build riscv-none-embed-gcc toolchain
+      run: |
+        cd C:\tools\risc-none-embed-gcc
+        python3 ./build-toolchain.py --target=riscv-none-embed --build-type=release --jobs=2 --install-dir=C:\tools\riscv-gcc
+        echo "C:\\tools\\riscv-gcc\\bin" >> $GITHUB_PATH
+        echo "RISC_COMPILER_PATH=C:\\tools\\riscv-gcc" >> $GITHUB_ENV
+
+    - name: Add Make from MounRiver Studio to PATH
+      run: |
+        echo "${{ github.workspace }}\\resources\\app\\resources\\win32\\others\\Build_Tools\\Make\\bin" >> $GITHUB_PATH
 
     - name: Download and extract RISC-V GCC (SiFive)
       run: |
