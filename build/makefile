@@ -4,7 +4,7 @@
 ################################################################################
 
 # Define the source directory
-SRC_DIR := $(abspath $(dir $(CURDIR))/..)
+SRC_DIR := $(abspath $(dir $(CURDIR)))
 
 # Include other makefiles
 -include ../makefile.init
