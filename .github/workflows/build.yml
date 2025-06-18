@@ -34,6 +34,17 @@ jobs:
         choco install make --yes
         echo "C:\\ProgramData\\chocolatey\\bin" >> $GITHUB_PATH
 
+    - name: Download and extract RISC-V GCC (SiFive)
+      run: |
+        curl -L -o riscv64-unknown-elf-toolchain.zip https://static.dev.sifive.com/dev-tools/freedom-tools/v2020.12/riscv64-unknown-elf-toolchain-10.2.0-2020.12.8-x86_64-w64-mingw32.zip
+        7z x riscv64-unknown-elf-toolchain.zip -oC:\tools\riscv
+        echo "C:\\tools\\riscv\\riscv64-unknown-elf-toolchain-10.2.0-2020.12.8-x86_64-w64-mingw32\\bin" >> $GITHUB_PATH
+        echo "RISC_COMPILER_PATH=C:\\tools\\riscv\\riscv64-unknown-elf-toolchain-10.2.0-2020.12.8-x86_64-w64-mingw32" >> $GITHUB_ENV
+
+    - name: Add Make from MounRiver Studio to PATH
+      run: |
+        echo "${{ github.workspace }}\\resources\\app\\resources\\win32\\others\\Build_Tools\\Make\\bin" >> $GITHUB_PATH
+
     - name: Refresh environment variables
       run: |
         echo "Refreshing environment variables..."
