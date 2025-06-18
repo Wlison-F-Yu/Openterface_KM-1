@@ -64,11 +64,14 @@ all:
 
 main-build: BLE_USB.elf secondary-outputs
 
+# Add the following flags to the compiler invocation
+CFLAGS += -include <stdint.h> -include <stddef.h>
+
 # Tool invocations
 BLE_USB.elf: $(OBJS) $(USER_OBJS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: GNU RISC-V Cross C Linker'
-	riscv-none-embed-gcc -march=rv32imacxw -mabi=ilp32 -mcmodel=medany -msmall-data-limit=8 -mno-save-restore -fmax-errors=20 -Os -fmessage-length=0 -fsigned-char -ffunction-sections -fdata-sections -fno-common -g -T "../HAL/Link.ld" -nostartfiles -Xlinker --gc-sections -L"../" -L"../LIB" -Xlinker --print-memory-usage -Wl,-Map,"BLE_USB.map" --specs=nano.specs --specs=nosys.specs -o "BLE_USB.elf" $(OBJS) $(USER_OBJS) $(LIBS)
+	riscv-none-embed-gcc -march=rv32imacxw -mabi=ilp32 -mcmodel=medany -msmall-data-limit=8 -mno-save-restore -fmax-errors=20 -Os -fmessage-length=0 -fsigned-char -ffunction-sections -fdata-sections -fno-common -g $(CFLAGS) -T "../HAL/Link.ld" -nostartfiles -Xlinker --gc-sections -L"../" -L"../LIB" -Xlinker --print-memory-usage -Wl,-Map,"BLE_USB.map" --specs=nano.specs --specs=nosys.specs -o "BLE_USB.elf" $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@
 BLE_USB.hex: BLE_USB.elf
