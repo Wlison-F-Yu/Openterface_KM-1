@@ -42,6 +42,8 @@ jobs:
         echo "Refreshing environment variables..."
         echo "PATH: $PATH"
         echo "RISC_COMPILER_PATH: ${{ env.RISC_COMPILER_PATH }}"
+        c:
+        cd c:\tools\MounRiver_Studio
         dir /s make.exe
         dir /s riscv-none-embed-gcc.exe
 
