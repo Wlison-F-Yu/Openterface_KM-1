@@ -19,24 +19,20 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: Cache MounRiver Studio
-      uses: actions/cache@v3
-      with:
-        path: C:\tools\MounRiver_Studio
-        key: MounRiver-Studio-${{ runner.os }}-${{ env.RISC_COMPILER_VERSION }}
-        restore-keys: |
-          MounRiver-Studio-${{ runner.os }}
-
-    - name: Install RISC-V GCC from MounRiver Studio (if not cached)
-      if: steps.cache.outputs.cache-hit != 'true'
+    - name: Install xpm
       run: |
-        curl -L -o MounRiver_Studio_Setup.zip http://file-oss.mounriver.com/upgrade/MounRiver_Studio_Setup_V210.zip
-        mkdir -p C:\tools\MounRiver_Studio
-        powershell -Command "Expand-Archive -Path MounRiver_Studio_Setup.zip -DestinationPath C:\tools\MounRiver_Studio"
-        echo "C:\\tools\\MounRiver_Studio\\resources\\app\\resources\\win32\\components\\WCH\\Toolchain\\RISC-V Embedded GCC\\bin" >> $GITHUB_PATH
-        echo "C:\\tools\\MounRiver_Studio\\resources\\app\\resources\\win32\\others\\Build_Tools\\Make\\bin" >> $GITHUB_PATH
-        echo "RISC_COMPILER_PATH=C:\\tools\\MounRiver_Studio\\resources\\app\\resources\\win32\\components\\WCH\\Toolchain\\RISC-V Embedded GCC" >> $GITHUB_ENV
-        find C:\\tools\\MounRiver_Studio -name "make.exe"
+        npm install --global xpm
+
+    - name: Install RISC-V Embedded GCC using xpm
+      run: |
+        xpm install --global @xpack-dev-tools/riscv-none-embed-gcc@${{ env.RISC_COMPILER_VERSION }}
+        echo "C:\\Users\\runneradmin\\AppData\\Roaming\\xPacks\\@xpack-dev-tools\\riscv-none-embed-gcc\\${{ env.RISC_COMPILER_VERSION }}\\.content\\bin" >> $GITHUB_PATH
+        echo "RISC_COMPILER_PATH=C:\\Users\\runneradmin\\AppData\\Roaming\\xPacks\\@xpack-dev-tools\\riscv-none-embed-gcc\\${{ env.RISC_COMPILER_VERSION }}\\.content" >> $GITHUB_ENV
+
+    - name: Install make using Chocolatey
+      run: |
+        choco install make --yes
+        echo "C:\\ProgramData\\chocolatey\\bin" >> $GITHUB_PATH
 
     - name: Refresh environment variables
       run: |
