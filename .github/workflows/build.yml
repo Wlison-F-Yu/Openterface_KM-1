@@ -23,45 +23,11 @@ jobs:
       run: |
         choco install -y git python3 make cmake mingw
 
-    - name: Clone risc-none-embed-gcc
+    - name: Clone risc-none-embed-gcc and configure environment
       run: |
         git clone --recursive https://github.com/openwch/risc-none-embed-gcc.git C:\tools\risc-none-embed-gcc
-
-    - name: Build riscv-none-embed-gcc toolchain
-      run: |
-        cd C:\tools\risc-none-embed-gcc
-        python3 ./build-toolchain.py --target=riscv-none-embed --build-type=release --jobs=2 --install-dir=C:\tools\riscv-gcc
-        echo "C:\\tools\\riscv-gcc\\bin" >> $GITHUB_PATH
-        echo "RISC_COMPILER_PATH=C:\\tools\\riscv-gcc" >> $GITHUB_ENV
-
-    - name: Add Make from MounRiver Studio to PATH
-      run: |
-        echo "${{ github.workspace }}\\resources\\app\\resources\\win32\\others\\Build_Tools\\Make\\bin" >> $GITHUB_PATH
-
-    - name: Download and extract RISC-V GCC (SiFive)
-      run: |
-        curl -L -o riscv64-none-elf-toolchain.zip https://static.dev.sifive.com/dev-tools/riscv-openocd-0.10.0-2019.05.1-x86_64-w64-mingw32.zip -oC:\tools\riscv
-        echo "C:\\tools\\riscv\\riscv64-none-elf-toolchain-0.10.0-2019.05.1-x86_64-w64-mingw32\\bin" >> $GITHUB_PATH
-        echo "RISC_COMPILER_PATH=C:\\tools\\riscv\\riscv64-none-elf-toolchain-0.10.0-2019.05.1-x86_64-w64-mingw32" >> $GITHUB_ENV
-        dir c:\tools
-        dir c:\tools\riscv
-        dir c:\tools\riscv\riscv64-none-elf-toolchain-0.10.0-2019.05.1-x86_64-w64-mingw32\
-        dir c:\tools\riscv\riscv64-none-elf-toolchain-0.10.0-2019.05.1-x86_64-w64-mingw32\bin
-
-    - name: Refresh environment variables
-      run: |
-        echo "Refreshing environment variables..."
-        echo "PATH: $PATH"
-        echo "RISC_COMPILER_PATH: ${{ env.RISC_COMPILER_PATH }}"
-        $env:PATH = [System.Environment]::GetEnvironmentVariable("PATH", "Process")
-        $env:RISC_COMPILER_PATH = [System.Environment]::GetEnvironmentVariable("RISC_COMPILER_PATH", "Process")
-
-    - name: Verify RISC-V GCC installation
-      run: |
-        echo "Checking RISC-V GCC installation..."
-        where riscv-none-embed-gcc || echo "RISC-V GCC not found in PATH"
-        echo "Current PATH: $PATH"
-        echo "RISC_COMPILER_PATH: ${{ env.RISC_COMPILER_PATH }}"
+        echo "C:\\tools\\risc-none-embed-gcc\\bin" >> $GITHUB_PATH
+        echo "RISC_COMPILER_PATH=C:\\tools\\risc-none-embed-gcc" >> $GITHUB_ENV
 
     - name: Build the project
       run: |
