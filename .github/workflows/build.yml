@@ -30,7 +30,11 @@ jobs:
         7z x riscv64-unknown-elf-toolchain.zip -oC:\tools\riscv
         echo "C:\\tools\\riscv\\riscv64-unknown-elf-toolchain-10.2.0-2020.12.8-x86_64-w64-mingw32\\bin" >> $GITHUB_PATH
         echo "RISC_COMPILER_PATH=C:\\tools\\riscv\\riscv64-unknown-elf-toolchain-10.2.0-2020.12.8-x86_64-w64-mingw32" >> $GITHUB_ENV
-
+        dir c:\tools
+        dir c:\tools\riscv
+        dir c:\tools\riscv\riscv64-unknown-elf-toolchain-10.2.0-2020.12.8-x86_64-w64-mingw32\
+        dir c:\tools\riscv\riscv64-unknown-elf-toolchain-10.2.0-2020.12.8-x86_64-w64-mingw32\bin
+        
     - name: Add Make from MounRiver Studio to PATH
       run: |
         echo "${{ github.workspace }}\\resources\\app\\resources\\win32\\others\\Build_Tools\\Make\\bin" >> $GITHUB_PATH
