@@ -26,8 +26,10 @@ jobs:
 
     - name: Clone risc-none-embed-gcc and configure environment
       run: |
-        wget https://github.com/openwch/risc-none-embed-gcc/archive/refs/tags/8.2.0.zip -o risc-none-embed-gcc.zip
-        unzip risc-none-embed-gcc.zip -d C:\\tools
+        wget https://github.com/openwch/risc-none-embed-gcc/archive/refs/tags/8.2.0.zip 
+        unzip 8.2.0.zip
+        mkdir c:\\tools
+        move risc-none-embed-gcc-8.2.0 c:\\tools\\risc-none-embed-gcc
         dir c:\\tools
         echo "RISC_COMPILER_PATH=C:\\tools\\risc-none-embed-gcc\\risc-none-embed-gcc-${{ env.RISC_COMPILER_VERSION }}" >> $GITHUB_ENV
         echo "C:\\tools\\risc-none-embed-gcc\\bin" >> $GITHUB_PATH
